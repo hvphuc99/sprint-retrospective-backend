@@ -40,7 +40,7 @@ User.find_by(username: FIRST_USER_CONST).boards.create([
 	},
 	{
 		name: "Night activities",
-		public: false,
+		public: true,
 	},
 ])
 
