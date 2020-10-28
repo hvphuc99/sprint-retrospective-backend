@@ -61,7 +61,19 @@ class BoardsController < ApplicationController
       format.html { redirect_to boards_url, notice: 'Board was successfully destroyed.' }
       format.json { head :no_content }
     end
-  end
+	end
+	
+	def privateBoard
+		@boards = Board.where(public: false);
+
+		render :json => @boards
+	end
+
+	def publicBoard
+		@boards = Board.where(public: true);
+
+		render :json => @boards
+	end
 
   private
     # Use callbacks to share common setup or constraints between actions.

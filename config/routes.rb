@@ -2,6 +2,10 @@ Rails.application.routes.draw do
 	resources :users do
 		resources :user_infos
 		resources :boards do
+			collection do
+				get '/private', to: 'boards#privateBoard'
+				get '/public', to: 'boards#publicBoard'
+			end
 			resources :columns do
 				resources :cards
 			end
