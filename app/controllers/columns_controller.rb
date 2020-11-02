@@ -4,12 +4,14 @@ class ColumnsController < ApplicationController
   # GET /columns
   # GET /columns.json
   def index
-    @columns = Column.all
+		@columns = Board.find(params[:board_id]).columns
+		
+		render :json => @columns
   end
 
   # GET /columns/1
   # GET /columns/1.json
-  def show
+	def show
   end
 
   # GET /columns/new
