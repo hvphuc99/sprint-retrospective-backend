@@ -1,7 +1,8 @@
 class BoardsController < ApplicationController
   before_action :set_board, only: [:show, :edit, :update, :destroy]
-
-  # GET /boards
+	skip_before_action :verify_authenticity_token, :only => :create
+	
+	# GET /boards
   # GET /boards.json
   def index
 		@boards = User.find(params[:user_id]).boards
@@ -27,17 +28,13 @@ class BoardsController < ApplicationController
   # POST /boards
   # POST /boards.json
   def create
-    @board = Board.new(board_params)
-
-    respond_to do |format|
-      if @board.save
-        format.html { redirect_to @board, notice: 'Board was successfully created.' }
-        format.json { render :show, status: :created, location: @board }
-      else
-        format.html { render :new }
-        format.json { render json: @board.errors, status: :unprocessable_entity }
-      end
-    end
+		@board = Board.new(board_params)
+		
+		if @board.save
+			render :json => @board, status: :created
+		else
+			render json: @board.errors, status: :unprocessable_entity
+		end
   end
 
   # PATCH/PUT /boards/1
@@ -84,6 +81,6 @@ class BoardsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def board_params
-      params.require(:board).permit(:name, :public, :user_id)
+      params.permit(:name, :public, :user_id)
     end
 end
