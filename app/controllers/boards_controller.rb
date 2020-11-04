@@ -27,14 +27,18 @@ class BoardsController < ApplicationController
 
   # POST /boards
   # POST /boards.json
-  def create
-		@board = Board.new(board_params)
+	def create
+		@board = User.find(params[:user_id]).boards.create({
+			name: params[:name]
+		})
+
+		render :json => @board
 		
-		if @board.save
-			render :json => @board, status: :created
-		else
-			render json: @board.errors, status: :unprocessable_entity
-		end
+		# if @board.save
+		# 	render :json => @board, status: :created
+		# else
+		# 	render json: @board.errors, status: :unprocessable_entity
+		# end
   end
 
   # PATCH/PUT /boards/1
