@@ -4,8 +4,10 @@ class BoardsController < ApplicationController
 	
 	# GET /boards
   # GET /boards.json
-  def index
-		@boards = User.find(params[:user_id]).boards
+	def index
+		data = JWT.decode(params[:token], 's3cr3t', false)
+		uid = data[0]
+		@boards = User.find(uid).boards
 
 		render :json => @boards
   end
@@ -81,6 +83,6 @@ class BoardsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def board_params
-      params.permit(:name, :public, :user_id)
+      params.permit(:name, :public, :user_id, :token)
     end
 end
