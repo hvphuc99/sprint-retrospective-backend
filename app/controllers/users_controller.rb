@@ -1,38 +1,8 @@
-require 'jwt'
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
-	skip_before_action :verify_authenticity_token, :only => [:register, :login]
 
   # GET /users
-	# GET /users.json
-	def login
-		@user = User.find_by(username: params[:username]);
-
-		if @user.password === params[:password]
-			token = JWT.encode(@user.id, 's3cr3t');
-			render :json => token
-		else 
-			render :json => @user.errors, status: :unprocessable_entity
-		end
-	end
-
-	def register
-		@user = User.create({
-			username: params[:username],
-			password: params[:password],
-			email: params[:email],
-		})
-
-		@user.create_user_info({
-			first_name: params[:first_name],
-			last_name: params[:last_name],
-		})
-
-		token = JWT.encode(@user.id, 's3cr3t');
-
-		render :json => token
-	end
-
+  # GET /users.json
   def index
     @users = User.all
   end
@@ -99,6 +69,6 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:username, :email, :password, :first_name, :last_name)
+      params.require(:user).permit(:username, :email, :password)
     end
 end
