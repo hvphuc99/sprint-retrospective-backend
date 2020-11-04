@@ -62,18 +62,13 @@ class BoardsController < ApplicationController
 	end
 	
 	def privateBoard
-		data = JWT.decode(params[:token], 's3cr3t', false)
-		uid = data[0]
-
-		@boards = User.find(uid).boards.where(public: false);
+		@boards = Board.where(public: false);
 
 		render :json => @boards
 	end
 
 	def publicBoard
-		data = JWT.decode(params[:token], 's3cr3t', false)
-		uid = data[0]
-		@boards = User.find(uid).boards.where(public: true);
+		@boards = Board.where(public: true);
 
 		render :json => @boards
 	end
@@ -81,7 +76,7 @@ class BoardsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_board
-      # @board = Board.find(params[:id])
+      @board = Board.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
