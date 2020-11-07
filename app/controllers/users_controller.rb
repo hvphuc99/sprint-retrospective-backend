@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
+	skip_before_action :verify_authenticity_token, :only => [:login, :register]
+	skip_before_action :authorized, only: [:login, :register]
 
   # GET /users
   # GET /users.json
@@ -19,12 +21,38 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
-  end
+	end
+	
+	def login
+		@user = User.find_by(username: params[:username])
+		if @user.password == params[:password]
+			@token = encode_token(user_id: @user.id)
+
+			render json: {token: @token}
+		end
+	end
+
+	def register
+		@user = User.create({
+			username: params[:username],
+			password: params[:password],
+			email: params[:email],
+		})
+
+		@user.create_user_info({
+			first_name: params[:first_name],
+			last_name: params[:last_name],
+		})
+
+		@token = encode_token(user_id: @user.id)
+
+		render json: {token: @token}
+	end
 
   # POST /users
   # POST /users.json
   def create
-    @user = User.new(user_params)
+		@user = User.new(user_params)
 
     respond_to do |format|
       if @user.save
@@ -69,6 +97,6 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:username, :email, :password)
+      params.require(:user).permit(:username, :email, :password, :first_name, :last_name)
     end
 end

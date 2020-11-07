@@ -4,8 +4,9 @@ class BoardsController < ApplicationController
 	
 	# GET /boards
   # GET /boards.json
-  def index
-		@boards = User.find(params[:user_id]).boards
+	def index
+		uid = current_user().id
+		@boards = User.find(uid).boards
 
 		render :json => @boards
   end
@@ -28,7 +29,8 @@ class BoardsController < ApplicationController
   # POST /boards
   # POST /boards.json
 	def create
-		@board = User.find(params[:user_id]).boards.create({
+		uid = current_user().id
+		@board = User.find(uid).boards.create({
 			name: params[:name]
 		})
 
@@ -66,13 +68,15 @@ class BoardsController < ApplicationController
 	end
 	
 	def privateBoard
-		@boards = Board.where(public: false);
+		uid = current_user().id
+		@boards = User.find(uid).boards.where(public: false);
 
 		render :json => @boards
 	end
 
 	def publicBoard
-		@boards = Board.where(public: true);
+		uid = current_user().id
+		@boards = User.find(uid).boards.where(public: true);
 
 		render :json => @boards
 	end
