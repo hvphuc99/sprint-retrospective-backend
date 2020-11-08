@@ -1,6 +1,6 @@
 class BoardsController < ApplicationController
   before_action :set_board, only: [:show, :edit, :update, :destroy]
-	skip_before_action :verify_authenticity_token, :only => :create
+	skip_before_action :verify_authenticity_token, :only => [:create, :destroy, :update]
 	
 	# GET /boards
   # GET /boards.json
@@ -34,6 +34,18 @@ class BoardsController < ApplicationController
 			name: params[:name]
 		})
 
+		@board.columns.create([
+			{
+				name: "Well Went"
+			},
+			{
+				name: "To Improve"
+			},
+			{
+				name: "Action Items"
+			},
+		])
+
 		render :json => @board
 		
 		# if @board.save
@@ -45,26 +57,26 @@ class BoardsController < ApplicationController
 
   # PATCH/PUT /boards/1
   # PATCH/PUT /boards/1.json
-  def update
-    respond_to do |format|
-      if @board.update(board_params)
-        format.html { redirect_to @board, notice: 'Board was successfully updated.' }
-        format.json { render :show, status: :ok, location: @board }
-      else
-        format.html { render :edit }
-        format.json { render json: @board.errors, status: :unprocessable_entity }
-      end
-    end
+	def update
+		@board.update(board_params)
+		render :json => { status: :successfully}
+
+    # respond_to do |format|
+    #   if @board.update(board_params)
+    #     format.html { redirect_to @board, notice: 'Board was successfully updated.' }
+    #     format.json { render :show, status: :ok, location: @board }
+    #   else
+    #     format.html { render :edit }
+    #     format.json { render json: @board.errors, status: :unprocessable_entity }
+    #   end
+    # end
   end
 
   # DELETE /boards/1
   # DELETE /boards/1.json
-  def destroy
-    @board.destroy
-    respond_to do |format|
-      format.html { redirect_to boards_url, notice: 'Board was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+	def destroy
+		@board.destroy
+		render :json => { status: :successfully}
 	end
 	
 	def privateBoard

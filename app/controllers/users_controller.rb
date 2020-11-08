@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
-	skip_before_action :verify_authenticity_token, :only => [:login, :register]
+  before_action :set_user, only: [:edit, :destroy]
+	skip_before_action :verify_authenticity_token, :only => [:login, :register, :update]
 	skip_before_action :authorized, only: [:login, :register]
 
   # GET /users
@@ -11,7 +11,11 @@ class UsersController < ApplicationController
 
   # GET /users/1
   # GET /users/1.json
-  def show
+	def show
+		uid = current_user().id
+		@user_info = User.find(uid).user_info
+
+		render :json => { user_info: @user_info }
   end
 
   # GET /users/new
@@ -67,16 +71,24 @@ class UsersController < ApplicationController
 
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
-  def update
-    respond_to do |format|
-      if @user.update(user_params)
-        format.html { redirect_to @user, notice: 'User was successfully updated.' }
-        format.json { render :show, status: :ok, location: @user }
-      else
-        format.html { render :edit }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
-    end
+	def update
+		uid = current_user().id
+		@user_info = User.find(uid).user_info
+		@user_info.update({
+			first_name: params[:first_name],
+			last_name: params[:last_name],
+		})
+		render :json => {status: :successfully}
+
+    # respond_to do |format|
+    #   if @user.update(user_params)
+    #     format.html { redirect_to @user, notice: 'User was successfully updated.' }
+    #     format.json { render :show, status: :ok, location: @user }
+    #   else
+    #     format.html { render :edit }
+    #     format.json { render json: @user.errors, status: :unprocessable_entity }
+    #   end
+    # end
   end
 
   # DELETE /users/1

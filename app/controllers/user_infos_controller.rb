@@ -1,5 +1,6 @@
 class UserInfosController < ApplicationController
   before_action :set_user_info, only: [:show, :edit, :update, :destroy]
+	skip_before_action :verify_authenticity_token, :only => :update
 
   # GET /user_infos
   # GET /user_infos.json
@@ -39,7 +40,7 @@ class UserInfosController < ApplicationController
 
   # PATCH/PUT /user_infos/1
   # PATCH/PUT /user_infos/1.json
-  def update
+	def update
     respond_to do |format|
       if @user_info.update(user_info_params)
         format.html { redirect_to @user_info, notice: 'User info was successfully updated.' }
