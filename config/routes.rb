@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 	post '/register', to: 'users#register'
 	get '/profile', to: 'users#show'
 	put '/profile', to: 'users#update'
+	post '/loginWithGoogle', to: 'users#loginWithGoogle'
 
 	resources :boards do
 		collection do

@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:edit, :destroy]
-	skip_before_action :verify_authenticity_token, :only => [:login, :register, :update]
-	skip_before_action :authorized, only: [:login, :register]
+	skip_before_action :verify_authenticity_token, :only => [:login, :register, :update, :loginWithGoogle]
+	skip_before_action :authorized, only: [:login, :register, :loginWithGoogle]
 
   # GET /users
   # GET /users.json
@@ -49,6 +49,28 @@ class UsersController < ApplicationController
 		})
 
 		@token = encode_token(user_id: @user.id)
+
+		render json: {token: @token}
+	end
+
+	def loginWithGoogle
+		@token = ""
+	
+		if (User.find_by(email: params[:email]) === nil)
+			@user = User.create({
+				email: params[:email],
+			})
+
+			@user.create_user_info({
+				first_name: params[:first_name],
+				last_name: params[:last_name],
+			})
+
+			@token = encode_token(user_id: @user.id, token_id: params[:tokenID])
+		else
+			@user = User.find_by(email: params[:email]);
+			@token = encode_token(user_id: @user.id, token_id: params[:tokenID])
+		end
 
 		render json: {token: @token}
 	end
@@ -109,6 +131,6 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:username, :email, :password, :first_name, :last_name)
+      params.require(:user).permit(:username, :email, :password, :first_name, :last_name, :tokenID)
     end
 end

@@ -58,3 +58,5 @@ gem 'rack-cors'
 gem 'jwt'
 
 gem 'byebug'
+
+gem 'omniauth-google-oauth2'
