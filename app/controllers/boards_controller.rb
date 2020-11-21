@@ -16,11 +16,11 @@ class BoardsController < ApplicationController
 	def show
 		uid = current_user().id
 		if uid === @board.user_id
-			render :json => @board
+			render :json => { board: @board, creator: true}
 		else
 			if @board.public === true
 				@board.collaborators.create(user_id: uid)
-				render :json => @board
+				render :json => { board: @board, creator: false}
 			else
 				render :json => @board.errors, status: :unprocessable_entity
 			end
@@ -104,27 +104,20 @@ class BoardsController < ApplicationController
 
 	def publicBoard
 		uid = current_user().id
-		boardPublicArray = Array.new
-		boardCollaboraArray = Array.new
+		boardArray = Array.new
 		@boards = User.find(uid).boards.where(public: true)
 		boardCollaborator = User.find(uid).collaborators
 		@boards.each do |b|
-			boardPublicArray << Board.find(b.id)
+			boardArray << Board.find(b.id)
 		end
 		boardCollaborator.each do |bc| 
 			bid = bc.board_id
-			boardCollaboraArray << Board.find(bid)
+			boardArray << Board.find(bid)
 		end
 
-		boardPublicArray = boardPublicArray.uniq
-		boardCollaborator = boardCollaborator.uniq
+		boardArray = boardArray.uniq
 
-		@boardArray = {
-			public: boardPublicArray,
-			collaborator: boardCollaboraArray,
-		}
-
-		render :json => @boardArray
+		render :json => boardArray
 	end
 
   private
