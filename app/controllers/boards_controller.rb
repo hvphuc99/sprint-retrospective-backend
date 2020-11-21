@@ -88,8 +88,11 @@ class BoardsController < ApplicationController
   # DELETE /boards/1
   # DELETE /boards/1.json
 	def destroy
-		@board.destroy
-		render :json => { status: :successfully}
+		uid = current_user().id
+		if uid === @board.user_id
+			@board.destroy
+			render :json => { status: :successfully}
+		end
 	end
 	
 	def privateBoard
