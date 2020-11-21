@@ -104,20 +104,27 @@ class BoardsController < ApplicationController
 
 	def publicBoard
 		uid = current_user().id
-		boardArray = Array.new
+		boardPublicArray = Array.new
+		boardCollaboraArray = Array.new
 		@boards = User.find(uid).boards.where(public: true)
 		boardCollaborator = User.find(uid).collaborators
 		@boards.each do |b|
-			boardArray << Board.find(b.id)
+			boardPublicArray << Board.find(b.id)
 		end
 		boardCollaborator.each do |bc| 
 			bid = bc.board_id
-			boardArray << Board.find(bid)
+			boardCollaboraArray << Board.find(bid)
 		end
 
-		boardArray = boardArray.uniq
+		boardPublicArray = boardPublicArray.uniq
+		boardCollaborator = boardCollaborator.uniq
 
-		render :json => boardArray
+		@boardArray = {
+			public: boardPublicArray,
+			collaborator: boardCollaboraArray,
+		}
+
+		render :json => @boardArray
 	end
 
   private
